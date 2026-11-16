@@ -26,8 +26,8 @@
 
 | Phase | What | Status |
 |------|------|--------|
-| 1 | Film DNA dashboard (`web/`) | In progress |
-| 2 | Model that predicts the rating you would give a film (`analysis/`) | Planned |
+| 1 | Film DNA dashboard (`web/`) | Done |
+| 2 | Model that predicts the rating you would give a film (`analysis/` + `web/`) | Done |
 | 3 | Group mode: pick a film with friends by swiping, Tinder-style | Planned |
 
 ## Three ways in
@@ -42,7 +42,7 @@ A **See an example** link loads a sample profile.
 
 ```
 web/       Next.js (App Router) + TypeScript + Tailwind + Framer Motion + Recharts – deploys to Vercel
-analysis/  Python notebooks and scripts (Phase 2)
+analysis/  Python research for Phase 2: dataset builder, features, models and the executed notebook
 ```
 
 ## Run locally
@@ -52,9 +52,19 @@ cd web
 cp .env.example .env.local   # add your TMDB v3 API key as TMDB_API_KEY
 npm install
 npm run dev
+npm test        # unit tests (the Python-equivalence test needs analysis/data/, see analysis/README.md)
 ```
 
 The API key is only used by the server routes in `web/app/api/`; it is never sent to the browser.
+
+## "How many stars would I give it?" (Phase 2)
+
+Search any film and Reelmate predicts the rating you would give it (with its margin of error and the top reasons, e.g. *"+0.6 because it's by Christopher Nolan"*), and sorts your watchlist by predicted rating. **The model is trained in your browser (in a Web Worker) from your own ratings**; there is no model server and no database.
+
+* **Research:** [`analysis/notebooks/01_rating_model.ipynb`](analysis/notebooks/01_rating_model.ipynb) compares baselines, Ridge, k-NN, Random Forest and Gradient Boosting with repeated cross-validation, target encoding computed inside each fold (no data leakage) and nested CV for Ridge (MAE 0.483★ vs 0.658★ for "always my mean" on 263 films; the TMDB-deviation baseline gets 0.517★). TMDB scores with few votes are shrunk towards the global mean (Bayesian adjustment) so a perfect 5.0 from one vote doesn't fool the model.
+* **Model on the web:** Random Forest is the most accurate (0.473★) but only by ~0.005–0.010★ (not significant against Ridge's plain fit), so the web uses **Ridge** (additive → exact explanations, trains in milliseconds in TypeScript: [`web/lib/model.ts`](web/lib/model.ts)). A unit test checks that the TypeScript version reproduces the Python MAE on the same folds.
+* **Per-user model choice:** below 30 ratings it uses a simple fallback (TMDB score shifted to your average + your genres). From 30 ratings on, it cross-validates both models on *your* ratings and uses the personal one if its error is lower than or equal to the fallback's (otherwise the fallback). Films with fewer than 100 TMDB votes are flagged as less reliable and ranked after the rest of your watchlist. The app always shows which one is active and its estimated accuracy ("±0.5 stars, within half a star for 6 out of 10 films").
+* Only the text typed in the search box and film ids/titles reach the server (to query TMDB); your ratings never leave the browser.
 
 ## How rankings are ordered
 
@@ -78,7 +88,7 @@ adjusted = (n · mean + m · C) / (n + m)
 
 **No guardamos tus datos en ningún servidor.** El .zip de Letterboxd se procesa en el navegador; al servidor solo llegan títulos y años (para buscarlos en TMDB) y, con la opción del RSS, el nombre de usuario. No hay base de datos.
 
-Tres formas de entrar: puntuar 15 películas en 1 minuto, usar tu usuario de Letterboxd (RSS público, ~50 últimas entradas del diario) o subir la exportación completa en .zip. Fases futuras: modelo que predice tu nota (fase 2) y modo grupo tipo Tinder (fase 3).
+Tres formas de entrar: puntuar 15 películas en 1 minuto, usar tu usuario de Letterboxd (RSS público, ~50 últimas entradas del diario) o subir la exportación completa en .zip. Fase 2 (hecha): «¿Cuánto le pondría yo?», un modelo que se entrena en tu navegador con tus notas, predice la nota de cualquier película con sus motivos y ordena tu watchlist (investigación en `analysis/`). Fase futura: modo grupo tipo Tinder (fase 3).
 
 ## Credits
 

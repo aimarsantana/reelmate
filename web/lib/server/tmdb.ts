@@ -46,7 +46,7 @@ interface TmdbDetails {
 }
 
 interface TmdbSearch {
-  results: { id: number; title: string; original_title: string; release_date?: string; popularity?: number }[];
+  results: { id: number; title: string; original_title: string; release_date?: string; popularity?: number; poster_path?: string | null }[];
 }
 
 const yearOf = (d?: string) => (d && d.length >= 4 ? Number(d.slice(0, 4)) : null);
@@ -138,4 +138,19 @@ export async function pool<T, R>(items: T[], limit: number, fn: (x: T) => Promis
     }),
   );
   return out;
+}
+
+export interface SearchHit {
+  id: number;
+  title: string;
+  year: number | null;
+  poster: string | null;
+}
+
+/** Free-text search for the "How many stars would I give it?" box (top results by popularity). */
+export async function searchMovies(query: string): Promise<SearchHit[]> {
+  const res = await tget<TmdbSearch>("/search/movie", { query, include_adult: "false" });
+  return (res?.results ?? [])
+    .slice(0, 8)
+    .map((r) => ({ id: r.id, title: r.title, year: yearOf(r.release_date), poster: r.poster_path ?? null }));
 }

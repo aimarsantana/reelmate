@@ -114,7 +114,7 @@ export function App() {
             )}
           </section>
         )}
-        {view.name === "dashboard" && <Dashboard profile={view.profile} enr={view.enr} onNew={goHome} onDelete={wipe} />}
+        {view.name === "dashboard" && <Dashboard profile={view.profile} enr={view.enr} onNew={goHome} onDelete={wipe} onRateMore={view.profile.source === "quick" ? () => setView({ name: "quick" }) : undefined} />}
       </main>
       <Footer />
     </>

@@ -9,6 +9,7 @@ import { useI18n } from "@/lib/i18n";
 import { computeStats, MIN_RATED, type Dim, type Group, type Opinion } from "@/lib/stats";
 import type { Enriched, Profile } from "@/lib/types";
 import { ShareCard } from "./ShareCard";
+import { ModelNote, NextToWatch, PredictSearch, useRatingModel } from "./Predictor";
 
 type DimKey = "directors" | "actors" | "genres" | "decades" | "countries";
 
@@ -91,14 +92,17 @@ export function Dashboard({
   enr,
   onNew,
   onDelete,
+  onRateMore,
 }: {
   profile: Profile;
   enr: Map<string, Enriched>;
   onNew: () => void;
   onDelete: () => void;
+  onRateMore?: () => void;
 }) {
   const { t, lang, num } = useI18n();
   const stats = useMemo(() => computeStats(profile, enr), [profile, enr]);
+  const model = useRatingModel(profile, enr);
   const [dim, setDim] = useState<DimKey>("directors");
   const [showReport, setShowReport] = useState(false);
 
@@ -290,7 +294,12 @@ export function Dashboard({
         )}
       </Section>
 
-      {/* 5. Watchlist (zip only) */}
+      {/* 5. How many stars would I give it? */}
+      <Section title={t.predTitle} sub={t.predSub}>
+        <PredictSearch model={model} onRateMore={onRateMore} />
+      </Section>
+
+      {/* 6. Watchlist (zip only) */}
       {(profile.source === "zip" || profile.source === "demo") && (
         <Section title={t.wlTitle}>
           {stats.watchlist ? (
@@ -318,7 +327,15 @@ export function Dashboard({
         </Section>
       )}
 
-      {/* 6. Share card */}
+      {/* 7. Watchlist ranked by predicted rating */}
+      {(profile.source === "zip" || profile.source === "demo") && stats.watchlist && (
+        <Section title={t.nextTitle} sub={t.nextSub}>
+          <NextToWatch profile={profile} enr={enr} model={model} />
+          <ModelNote model={model} onRateMore={onRateMore} />
+        </Section>
+      )}
+
+      {/* 8. Share card */}
       <Section title={t.cardTitle} sub={t.cardSub}>
         <ShareCard stats={stats} />
       </Section>
