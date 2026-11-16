@@ -4,6 +4,24 @@
 
 > **We don't store your data on any server.** Letterboxd exports are parsed client-side in your browser. Only film titles and years reach the server (to be looked up on TMDB). Nothing is stored in a database.
 
+**Live demo:** coming soon
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/home.png" alt="Reelmate home page" width="85%">
+</p>
+
+| Summary | What you fall for |
+|---|---|
+| ![Summary](docs/screenshots/dashboard-summary.png) | ![What you fall for](docs/screenshots/dashboard-taste.png) |
+| **You vs. the world** | **Spec sheet** |
+| ![You vs. the world](docs/screenshots/dashboard-vs-world.png) | ![Spec sheet](docs/screenshots/dashboard-spec-sheet.png) |
+
+<p align="center">
+  <img src="docs/screenshots/home-mobile.png" alt="Reelmate on mobile (375 px)" width="300">
+</p>
+
 ## Roadmap
 
 | Phase | What | Status |
