@@ -1,0 +1,24 @@
+﻿# dependencies / builds
+node_modules/
+.next/
+out/
+
+# environment & secrets
+.env
+.env.*
+!.env.example
+
+# personal data exports (Letterboxd) - never commit
+*.zip
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.vercel

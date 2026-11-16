@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0a0e;
+  --surface: #15131b;
+  --surface-2: #1d1a25;
+  --line: #2c2836;
+  --fg: #f4efe4;
+  --muted: #a9a2b3;
+  --accent: #f2b134; /* marquee amber */
+  --accent-ink: #1a1203;
+  --red: #e5484d; /* velvet curtain red */
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-red: var(--red);
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-bebas);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1100px 520px at 50% -140px, rgba(242, 177, 52, 0.13), transparent 70%),
+    radial-gradient(700px 400px at 100% 8%, rgba(229, 72, 77, 0.08), transparent 70%), var(--bg);
+  background-attachment: fixed;
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), Impact, sans-serif;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Perforated ticket-stub edge */
+.ticket {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1.15rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-primary:hover {
+  background: #ffc455;
+}
+.btn-ghost {
+  border: 1px solid var(--line);
+  color: var(--fg);
+  background: transparent;
+}
+.btn-ghost:hover {
+  border-color: var(--muted);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.reel-spin {
+  animation: spin-slow 6s linear infinite;
+  transform-origin: 50% 50%;
+}
